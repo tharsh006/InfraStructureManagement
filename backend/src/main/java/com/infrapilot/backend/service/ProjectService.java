@@ -1,4 +1,5 @@
 package com.infrapilot.backend.service;
+import com.infrapilot.backend.exception.ProjectNotFoundException;
 
 import com.infrapilot.backend.model.Project;
 import com.infrapilot.backend.repository.ProjectRepository;
@@ -27,13 +28,25 @@ public class ProjectService {
 
     // Get project by ID
     public Project getProjectById(Long id) {
-        return projectRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Project not found with ID: " + id));
-    }
+    return projectRepository.findById(id)
+            .orElseThrow(() -> new ProjectNotFoundException(id));
+}
 
     // Delete project
     public void deleteProject(Long id) {
-        projectRepository.deleteById(id);
-    }
+    Project project = getProjectById(id);
+    projectRepository.delete(project);
+}
+
+	// Update an existing project
+public Project updateProject(Long id, Project updatedProject) {
+
+    Project existingProject = getProjectById(id);
+
+    existingProject.setName(updatedProject.getName());
+    existingProject.setDescription(updatedProject.getDescription());
+
+    return projectRepository.save(existingProject);
+}
+
 }
