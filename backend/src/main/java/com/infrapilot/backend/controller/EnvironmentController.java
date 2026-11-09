@@ -1,5 +1,6 @@
 package com.infrapilot.backend.controller;
 
+import com.infrapilot.backend.dto.EnvironmentResponse;
 import com.infrapilot.backend.model.Environment;
 import com.infrapilot.backend.service.EnvironmentService;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ public class EnvironmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Environment createEnvironment(
+    public EnvironmentResponse createEnvironment(
             @PathVariable Long projectId,
             @Valid @RequestBody Environment environment) {
 
@@ -28,14 +29,14 @@ public class EnvironmentController {
     }
 
     @GetMapping
-    public List<Environment> getEnvironments(
+    public List<EnvironmentResponse> getEnvironments(
             @PathVariable Long projectId) {
 
         return environmentService.getEnvironmentsByProject(projectId);
     }
 
     @GetMapping("/{environmentId}")
-    public Environment getEnvironment(
+    public EnvironmentResponse getEnvironment(
             @PathVariable Long projectId,
             @PathVariable Long environmentId) {
 
@@ -43,7 +44,7 @@ public class EnvironmentController {
     }
 
     @PutMapping("/{environmentId}")
-    public Environment updateEnvironment(
+    public EnvironmentResponse updateEnvironment(
             @PathVariable Long projectId,
             @PathVariable Long environmentId,
             @Valid @RequestBody Environment environment) {

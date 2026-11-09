@@ -1,5 +1,8 @@
 package com.infrapilot.backend.service;
 
+import com.infrapilot.backend.dto.EnvironmentResponse;
+import com.infrapilot.backend.exception.EnvironmentNotFoundException;
+import com.infrapilot.backend.exception.ProjectNotFoundException;
 import com.infrapilot.backend.model.Environment;
 import com.infrapilot.backend.model.Project;
 import com.infrapilot.backend.repository.EnvironmentRepository;
@@ -21,52 +24,86 @@ public class EnvironmentService {
         this.projectRepository = projectRepository;
     }
 
-    public Environment createEnvironment(Long projectId, Environment environment) {
+    public EnvironmentResponse createEnvironment(
+            Long projectId, Environment environment) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Project not found with ID: " + projectId));
+                .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         environment.setProject(project);
 
-        return environmentRepository.save(environment);
+        Environment saved = environmentRepository.save(environment);
+
+        return toResponse(saved);
     }
 
-    public List<Environment> getEnvironmentsByProject(Long projectId) {
+    public List<EnvironmentResponse> getEnvironmentsByProject(Long projectId) {
 
         if (!projectRepository.existsById(projectId)) {
-            throw new RuntimeException(
-                    "Project not found with ID: " + projectId);
+            throw new ProjectNotFoundException(projectId);
         }
 
-        return environmentRepository.findByProjectId(projectId);
+        return environmentRepository.findByProjectId(projectId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public Environment getEnvironmentById(Long projectId, Long environmentId) {
+    public EnvironmentResponse getEnvironmentById(
+            Long projectId, Long environmentId) {
 
-        return environmentRepository
-                .findByIdAndProjectId(environmentId, projectId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Environment not found with ID: " + environmentId));
+        checkProjectExists(projectId);
+
+        Environment environment = findEnvironment(projectId, environmentId);
+
+        return toResponse(environment);
     }
 
-    public Environment updateEnvironment(
-            Long projectId, Long environmentId, Environment updatedEnvironment) {
+    public EnvironmentResponse updateEnvironment(
+            Long projectId,
+            Long environmentId,
+            Environment updatedEnvironment) {
 
-        Environment existingEnvironment =
-                getEnvironmentById(projectId, environmentId);
+        checkProjectExists(projectId);
+
+        Environment existingEnvironment = findEnvironment(projectId, environmentId);
 
         existingEnvironment.setName(updatedEnvironment.getName());
         existingEnvironment.setDescription(updatedEnvironment.getDescription());
 
-        return environmentRepository.save(existingEnvironment);
+        Environment saved = environmentRepository.save(existingEnvironment);
+
+        return toResponse(saved);
     }
 
     public void deleteEnvironment(Long projectId, Long environmentId) {
 
-        Environment environment =
-                getEnvironmentById(projectId, environmentId);
+        checkProjectExists(projectId);
+
+        Environment environment = findEnvironment(projectId, environmentId);
 
         environmentRepository.delete(environment);
+    }
+
+    private void checkProjectExists(Long projectId) {
+        if (!projectRepository.existsById(projectId)) {
+            throw new ProjectNotFoundException(projectId);
+        }
+    }
+
+    private Environment findEnvironment(Long projectId, Long environmentId) {
+        return environmentRepository
+                .findByIdAndProjectId(environmentId, projectId)
+                .orElseThrow(() -> new EnvironmentNotFoundException(environmentId));
+    }
+
+    private EnvironmentResponse toResponse(Environment environment) {
+        return new EnvironmentResponse(
+                environment.getId(),
+                environment.getName(),
+                environment.getDescription(),
+                environment.getProject().getId(),
+                environment.getCreatedAt()
+        );
     }
 }

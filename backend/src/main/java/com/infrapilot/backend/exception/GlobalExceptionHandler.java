@@ -14,11 +14,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleProjectNotFound(
             ProjectNotFoundException exception) {
 
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "error", "Not Found",
-                        "message", exception.getMessage()
-                ));
+        Map<String, String> error = Map.of(
+                "error", "Not Found",
+                "message", exception.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(EnvironmentNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEnvironmentNotFound(
+            EnvironmentNotFoundException exception) {
+
+        Map<String, String> error = Map.of(
+                "error", "Not Found",
+                "message", exception.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }
