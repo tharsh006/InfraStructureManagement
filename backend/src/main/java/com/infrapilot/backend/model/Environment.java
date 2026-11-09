@@ -1,4 +1,5 @@
 package com.infrapilot.backend.model;
+import com.infrapilot.backend.enums.EnvironmentType;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +10,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "environments")
 public class Environment {
+
+@Enumerated(EnumType.STRING)
+@Column(nullable = false, length = 20)
+private EnvironmentType type;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +66,14 @@ public class Environment {
     public void setProject(Project project) {
         this.project = project;
     }
+
+public EnvironmentType getType() {
+    return type;
+}
+
+public void setType(EnvironmentType type) {
+    this.type = type;
+}
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

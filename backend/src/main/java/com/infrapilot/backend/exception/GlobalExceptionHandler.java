@@ -10,6 +10,18 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+@ExceptionHandler(IllegalArgumentException.class)
+public ResponseEntity<Map<String, String>> handleBadRequest(
+        IllegalArgumentException exception) {
+
+    Map<String, String> error = Map.of(
+            "error", "Bad Request",
+            "message", exception.getMessage()
+    );
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+}
     @ExceptionHandler(ProjectNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleProjectNotFound(
             ProjectNotFoundException exception) {
