@@ -1,6 +1,6 @@
-package com.infrapilot.backend.dto;
+package com.inframanagement.backend.dto;
 
-import com.infrapilot.backend.enums.EnvironmentType;
+import com.inframanagement.backend.enums.EnvironmentType;
 import java.time.LocalDateTime;
 
 public class EnvironmentResponse {

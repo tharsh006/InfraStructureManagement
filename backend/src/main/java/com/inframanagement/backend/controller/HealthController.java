@@ -1,4 +1,4 @@
-package com.infrapilot.backend.controller;
+package com.inframanagement.backend.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,8 +11,8 @@ public class HealthController {
     @GetMapping("/api/health")
     public Map<String, String> health() {
         return Map.of(
-            "status", "UP",
-            "application", "InfraPilot"
+                "status", "UP",
+                "application", "InfraManagement"
         );
     }
 }

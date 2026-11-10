@@ -1,14 +1,12 @@
+package com.inframanagement.backend.service;
 
-package com.infrapilot.backend.service;
-
-import com.infrapilot.backend.dto.EnvironmentResponse;
-import com.infrapilot.backend.enums.EnvironmentType;
-import com.infrapilot.backend.exception.EnvironmentNotFoundException;
-import com.infrapilot.backend.exception.ProjectNotFoundException;
-import com.infrapilot.backend.model.Environment;
-import com.infrapilot.backend.model.Project;
-import com.infrapilot.backend.repository.EnvironmentRepository;
-import com.infrapilot.backend.repository.ProjectRepository;
+import com.inframanagement.backend.dto.EnvironmentResponse;
+import com.inframanagement.backend.exception.EnvironmentNotFoundException;
+import com.inframanagement.backend.exception.ProjectNotFoundException;
+import com.inframanagement.backend.model.Environment;
+import com.inframanagement.backend.model.Project;
+import com.inframanagement.backend.repository.EnvironmentRepository;
+import com.inframanagement.backend.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,36 +20,38 @@ public class EnvironmentService {
     public EnvironmentService(
             EnvironmentRepository environmentRepository,
             ProjectRepository projectRepository) {
-
         this.environmentRepository = environmentRepository;
         this.projectRepository = projectRepository;
     }
 
-    // Create environment
     public EnvironmentResponse createEnvironment(
             Long projectId, Environment environment) {
 
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() ->
-                        new ProjectNotFoundException(projectId));
+        Project project = getProject(projectId);
 
         if (environment.getType() == null) {
             throw new IllegalArgumentException(
                     "Environment type is required");
         }
 
+        if (environmentRepository.existsByProjectIdAndNameIgnoreCase(
+                projectId, environment.getName())) {
+            throw new IllegalArgumentException(
+                    "An environment with this name already exists in this project");
+        }
+
         environment.setProject(project);
 
-        Environment saved = environmentRepository.save(environment);
+        Environment savedEnvironment =
+                environmentRepository.save(environment);
 
-        return toResponse(saved);
+        return toResponse(savedEnvironment);
     }
 
-    // Get all environments belonging to a project
     public List<EnvironmentResponse> getEnvironmentsByProject(
             Long projectId) {
 
-        checkProjectExists(projectId);
+        getProject(projectId);
 
         return environmentRepository.findByProjectId(projectId)
                 .stream()
@@ -59,11 +59,10 @@ public class EnvironmentService {
                 .toList();
     }
 
-    // Get one environment
     public EnvironmentResponse getEnvironmentById(
             Long projectId, Long environmentId) {
 
-        checkProjectExists(projectId);
+        getProject(projectId);
 
         Environment environment =
                 findEnvironment(projectId, environmentId);
@@ -71,13 +70,12 @@ public class EnvironmentService {
         return toResponse(environment);
     }
 
-    // Update environment
     public EnvironmentResponse updateEnvironment(
             Long projectId,
             Long environmentId,
             Environment updatedEnvironment) {
 
-        checkProjectExists(projectId);
+        getProject(projectId);
 
         Environment existingEnvironment =
                 findEnvironment(projectId, environmentId);
@@ -87,22 +85,30 @@ public class EnvironmentService {
                     "Environment type is required");
         }
 
+        if (environmentRepository
+                .existsByProjectIdAndNameIgnoreCaseAndIdNot(
+                        projectId,
+                        updatedEnvironment.getName(),
+                        environmentId)) {
+            throw new IllegalArgumentException(
+                    "An environment with this name already exists in this project");
+        }
+
         existingEnvironment.setName(updatedEnvironment.getName());
         existingEnvironment.setDescription(
                 updatedEnvironment.getDescription());
         existingEnvironment.setType(updatedEnvironment.getType());
 
-        Environment saved =
+        Environment savedEnvironment =
                 environmentRepository.save(existingEnvironment);
 
-        return toResponse(saved);
+        return toResponse(savedEnvironment);
     }
 
-    // Delete environment
     public void deleteEnvironment(
             Long projectId, Long environmentId) {
 
-        checkProjectExists(projectId);
+        getProject(projectId);
 
         Environment environment =
                 findEnvironment(projectId, environmentId);
@@ -110,15 +116,12 @@ public class EnvironmentService {
         environmentRepository.delete(environment);
     }
 
-    // Check whether project exists
-    private void checkProjectExists(Long projectId) {
-
-        if (!projectRepository.existsById(projectId)) {
-            throw new ProjectNotFoundException(projectId);
-        }
+    private Project getProject(Long projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() ->
+                        new ProjectNotFoundException(projectId));
     }
 
-    // Find environment under the specified project
     private Environment findEnvironment(
             Long projectId, Long environmentId) {
 
@@ -128,9 +131,7 @@ public class EnvironmentService {
                         new EnvironmentNotFoundException(environmentId));
     }
 
-    // Convert entity into DTO
     private EnvironmentResponse toResponse(Environment environment) {
-
         return new EnvironmentResponse(
                 environment.getId(),
                 environment.getName(),

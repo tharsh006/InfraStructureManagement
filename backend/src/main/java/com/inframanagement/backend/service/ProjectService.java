@@ -1,8 +1,8 @@
-package com.infrapilot.backend.service;
-import com.infrapilot.backend.exception.ProjectNotFoundException;
+package com.inframanagement.backend.service;
+import com.inframanagement.backend.exception.ProjectNotFoundException;
 
-import com.infrapilot.backend.model.Project;
-import com.infrapilot.backend.repository.ProjectRepository;
+import com.inframanagement.backend.model.Project;
+import com.inframanagement.backend.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package com.infrapilot.backend.controller;
+package com.inframanagement.backend.controller;
 import jakarta.validation.Valid;
 
-import com.infrapilot.backend.model.Project;
-import com.infrapilot.backend.service.ProjectService;
+import com.inframanagement.backend.model.Project;
+import com.inframanagement.backend.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

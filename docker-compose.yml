@@ -1,10 +1,10 @@
 services:
   db:
     image: postgres:17-alpine
-    container_name: infrapilot-postgres
+    container_name: inframanagement-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: infrapilot
+      POSTGRES_DB: inframanagement
       POSTGRES_USER: infrauser
       POSTGRES_PASSWORD: local-dev-password
     ports:
@@ -12,10 +12,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U infrauser -d infrapilot"]
+      test: ["CMD-SHELL", "pg_isready -U infrauser -d inframanagement"]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
   postgres_data:
+    name: infrastructuremanagement_postgres_data

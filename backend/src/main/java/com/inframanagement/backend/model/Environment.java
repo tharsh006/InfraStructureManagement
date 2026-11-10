@@ -1,5 +1,5 @@
-package com.infrapilot.backend.model;
-import com.infrapilot.backend.enums.EnvironmentType;
+package com.inframanagement.backend.model;
+import com.inframanagement.backend.enums.EnvironmentType;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

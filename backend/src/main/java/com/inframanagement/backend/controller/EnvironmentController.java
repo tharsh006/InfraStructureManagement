@@ -1,8 +1,8 @@
-package com.infrapilot.backend.controller;
+package com.inframanagement.backend.controller;
 
-import com.infrapilot.backend.dto.EnvironmentResponse;
-import com.infrapilot.backend.model.Environment;
-import com.infrapilot.backend.service.EnvironmentService;
+import com.inframanagement.backend.dto.EnvironmentResponse;
+import com.inframanagement.backend.model.Environment;
+import com.inframanagement.backend.service.EnvironmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.infrapilot.backend.exception;
+package com.inframanagement.backend.exception;
 
 public class EnvironmentNotFoundException extends RuntimeException {
 

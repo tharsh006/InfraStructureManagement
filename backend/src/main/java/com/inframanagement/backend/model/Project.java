@@ -1,4 +1,4 @@
-package com.infrapilot.backend.model;
+package com.inframanagement.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

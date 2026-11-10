@@ -1,4 +1,4 @@
-package com.infrapilot.backend;
+package com.inframanagement.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

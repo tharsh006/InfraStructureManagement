@@ -1,4 +1,4 @@
-package com.infrapilot.backend.enums;
+package com.inframanagement.backend.enums;
 
 public enum EnvironmentType {
     DEVELOPMENT,
